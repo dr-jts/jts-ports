@@ -1,5 +1,9 @@
 # jts-ports
-Ports of external algorithms to run with JTS
+Ports of external algorithms to run with JTS,
+to support assessing functionality and performance.
+
+Code is provided as-is.  
+Licensing and copyright is governed by the original code license.
 
 ## Using
 
