@@ -13,15 +13,14 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 
 import clipper.Clipper;
+import clipper.ClipperOffset;
 import clipper.DefaultClipper;
 import clipper.Path;
 import clipper.Paths;
 import clipper.Point;
+import clipper.Point.LongPoint;
 import clipper.PolyNode;
 import clipper.PolyTree;
-import clipper.Clipper.ClipType;
-import clipper.Clipper.PolyType;
-import clipper.Point.LongPoint;
 
 public class JtsClipper {
 
@@ -33,6 +32,21 @@ public class JtsClipper {
 
   public static Geometry union(Geometry a, Geometry b, int scale) {
     return executeClip(a, b, Clipper.ClipType.UNION, scale);
+  }
+  
+  public static Geometry offset(Geometry a, int scale, double distance) {
+    PrecisionModel pm = new PrecisionModel(scale);
+    Paths ap = toPaths(a, pm);
+    
+    final ClipperOffset cp = new ClipperOffset( );
+    cp.addPaths( ap, Clipper.JoinType.ROUND, Clipper.EndType.CLOSED_POLYGON );
+
+    final PolyTree resultPaths = new PolyTree();
+    cp.execute(resultPaths, distance * scale);
+    // TODO: check success
+    Geometry result = fromPolyTree(resultPaths, pm);
+    
+    return result;
   }
   
   private static Geometry executeClip(Geometry a, Geometry b, Clipper.ClipType op, int scale) {
