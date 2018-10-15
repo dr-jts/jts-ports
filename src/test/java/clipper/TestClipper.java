@@ -4,6 +4,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
+import clipper.jts.JtsClipper;
+
 public class TestClipper {
 
   public static void main(String[] args) {

@@ -1,9 +1,9 @@
 import org.locationtech.jts.geom.Geometry;
 
 import clipper.DefaultClipper;
-import clipper.JtsClipper;
 import clipper.Clipper;
 import clipper.Paths;
+import clipper.jts.JtsClipper;
 
 public class PortsClipper {
 
