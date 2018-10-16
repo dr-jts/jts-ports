@@ -34,6 +34,10 @@ public class JtsClipper {
     return executeClip(a, b, Clipper.ClipType.UNION, scale);
   }
   
+  public static Geometry unaryUnion(Geometry a, int scale) {
+    return executeClip(a, null, Clipper.ClipType.UNION, scale);
+  }
+  
   public static Geometry offset(Geometry a, int scale, double distance) {
     PrecisionModel pm = new PrecisionModel(scale);
     Paths ap = toPaths(a, pm);
@@ -51,12 +55,14 @@ public class JtsClipper {
   
   private static Geometry executeClip(Geometry a, Geometry b, Clipper.ClipType op, int scale) {
     PrecisionModel pm = new PrecisionModel(scale);
-    Paths ap = toPaths(a, pm);
-    Paths bp = toPaths(b, pm);
     
     final DefaultClipper cp = new DefaultClipper( Clipper.STRICTLY_SIMPLE );
+    Paths ap = toPaths(a, pm);
     cp.addPaths( ap, Clipper.PolyType.SUBJECT, true );
-    cp.addPaths( bp, Clipper.PolyType.CLIP, true );
+    if (b != null) {
+      Paths bp = toPaths(b, pm);
+      cp.addPaths( bp, Clipper.PolyType.CLIP, true );
+    }
 
     /*
     final Paths resultPaths = new Paths();
@@ -65,7 +71,7 @@ public class JtsClipper {
     */
     
     final PolyTree resultPaths = new PolyTree();
-    boolean success = cp.execute( op, resultPaths);
+    boolean success = cp.execute( op, resultPaths, Clipper.PolyFillType.NON_ZERO, Clipper.PolyFillType.NON_ZERO);
     // TODO: check success
     Geometry result = fromPolyTree(resultPaths, pm);
     
@@ -160,14 +166,21 @@ public class JtsClipper {
   }
 
   private static Paths toPaths(Geometry a, PrecisionModel pm) {
-    Polygon poly = (Polygon) a;
-    LineString shell = poly.getExteriorRing();
-    Path p = toPath(shell, pm);
     Paths pp = new Paths();
-    pp.add(p);
+    for (int i = 0; i < a.getNumGeometries(); i++) {
+      Polygon poly = (Polygon) a.getGeometryN(i);
+      pp.add(toPath(poly, pm));
+    }
     return pp;
   }
 
+  private static Path toPath(Polygon a, PrecisionModel pm) {
+    Polygon poly = (Polygon) a;
+    LineString shell = poly.getExteriorRing();
+    Path p = toPath(shell, pm);
+    return p;
+  }
+  
   private static Path toPath(LineString shell, PrecisionModel pm) {
     Path path = new Path(shell.getNumPoints());
     

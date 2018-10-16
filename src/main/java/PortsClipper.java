@@ -14,6 +14,10 @@ public class PortsClipper {
   public static Geometry union(Geometry a, Geometry b, int scale) {
     return JtsClipper.union(a, b, scale);
   }
+  
+  public static Geometry unaryUnion(Geometry a, int scale) {
+    return JtsClipper.unaryUnion(a, scale);
+  }
 
   public static Geometry offset(Geometry a, int scale, double distance) {
     return JtsClipper.offset(a, scale, distance);
