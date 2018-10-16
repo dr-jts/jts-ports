@@ -6,7 +6,8 @@ import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class PortsGeoTools {
   
-  public static Geometry clip(Geometry geom, Geometry box) {
+  @Metadata(description="Clips a geometry to a rectangle.")
+  public static Geometry clipToRectangle(Geometry geom, Geometry box) {
     return GeometryClipper.clip(geom, box);
   }
   
@@ -14,8 +15,9 @@ public class PortsGeoTools {
     return OffsetCurveBuilder.offsetCurve(g, offset);
   }
   
+  @Metadata(description="Smooths a geometry by inserting points along Bezier splines.")
   public static Geometry smooth(Geometry g, 
-      @Metadata(title="Smoothing fraction", description="Alpha value to smooth by (in [0, 1])") double alpha) {
+      @Metadata(title="Smoothing fraction", description="Alpha value to smooth by (in [0, 1] )") double alpha) {
     return JTS.smooth(g, alpha);
   }
 }
