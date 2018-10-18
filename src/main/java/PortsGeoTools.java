@@ -32,8 +32,8 @@ public class PortsGeoTools {
   }
   
   @Metadata(description="Computes a near-optimal point for labelling")
-  public static Geometry labelPointAll(Geometry g, 
-      @Metadata(title="Precision", description="Precision for point placement") double precision) {
+  public static Geometry labelPointEach(Geometry g, 
+      @Metadata(title="Precision", description="Precision for point placement") final double precision) {
     return GeometryMapper.map(g, new MapOp() {
       public Geometry map(Geometry g) {
         return PolyLabeller.getPolylabel(g, precision);
@@ -42,8 +42,8 @@ public class PortsGeoTools {
   }
   
   @Metadata(description="Computes near-optimal points for labelling")
-  public static Geometry labelPointFastAll(Geometry g, 
-      @Metadata(title="Precision", description="Precision for point placement") double precision) {
+  public static Geometry labelPointFastEach(Geometry g, 
+      @Metadata(title="Precision", description="Precision for point placement") final double precision) {
     return GeometryMapper.map(g, new MapOp() {
       public Geometry map(Geometry g) {
         return PolyLabellerFast.getPoint(g, precision);
@@ -52,7 +52,7 @@ public class PortsGeoTools {
   }
   
   @Metadata(description="Computes interior points")
-  public static Geometry interiorPointAll(Geometry g) {
+  public static Geometry interiorPointEach(Geometry g) {
     return GeometryMapper.map(g, new MapOp() {
       public Geometry map(Geometry g) {
         return g.getInteriorPoint();
