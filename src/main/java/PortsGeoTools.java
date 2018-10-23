@@ -4,8 +4,6 @@ import org.geotools.geometry.jts.OffsetCurveBuilder;
 import org.geotools.polylabel.PolyLabeller;
 import org.geotools.polylabelfast.PolyLabellerFast;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.util.GeometryMapper;
-import org.locationtech.jts.geom.util.GeometryMapper.MapOp;
 import org.locationtech.jtstest.geomfunction.Metadata;
 
 public class PortsGeoTools {
@@ -25,38 +23,16 @@ public class PortsGeoTools {
     return JTS.smooth(g, alpha);
   }
   
-  @Metadata(description="Computes a near-optimal point for labelling")
+  @Metadata(description="Computes a near-optimal interior point for labelling")
   public static Geometry labelPoint(Geometry g, 
-      @Metadata(title="Precision", description="Precision for point placement") double precision) {
-    return PolyLabeller.getPolylabel(g, precision);
+      @Metadata(title="Precision", description="Tolerance distance for point placement") double tolerance) {
+    return PolyLabeller.getPolylabel(g, tolerance);
   }
   
-  @Metadata(description="Computes a near-optimal point for labelling")
-  public static Geometry labelPointEach(Geometry g, 
-      @Metadata(title="Precision", description="Precision for point placement") final double precision) {
-    return GeometryMapper.map(g, new MapOp() {
-      public Geometry map(Geometry g) {
-        return PolyLabeller.getPolylabel(g, precision);
-      }
-    });
+  @Metadata(description="Computes a near-optimal interior point for labelling, using fast algorithms")
+  public static Geometry labelPointFast(Geometry g, 
+      @Metadata(title="Precision", description="Tolerance distance for point placement") double tolerance) {
+    return PolyLabellerFast.getPoint(g, tolerance);
   }
   
-  @Metadata(description="Computes near-optimal points for labelling")
-  public static Geometry labelPointFastEach(Geometry g, 
-      @Metadata(title="Precision", description="Precision for point placement") final double precision) {
-    return GeometryMapper.map(g, new MapOp() {
-      public Geometry map(Geometry g) {
-        return PolyLabellerFast.getPoint(g, precision);
-      }
-    });
-  }
-  
-  @Metadata(description="Computes interior points")
-  public static Geometry interiorPointEach(Geometry g) {
-    return GeometryMapper.map(g, new MapOp() {
-      public Geometry map(Geometry g) {
-        return g.getInteriorPoint();
-      }
-    });
-  }
 }
