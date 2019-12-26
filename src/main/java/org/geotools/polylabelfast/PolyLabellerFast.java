@@ -37,7 +37,7 @@ import org.locationtech.jts.operation.distance.IndexedFacetDistance;
  * Based on Vladimir Agafonkin's Algorithm https://www.mapbox.com/blog/polygon-center/
  * 
  * @author Ian Turton
- * @author Casper Børgesen
+ * @author Casper Bï¿½rgesen
  */
 public class PolyLabellerFast {
 
@@ -63,7 +63,7 @@ public class PolyLabellerFast {
   private double distanceToPoly(Point p) {
     boolean inside = Location.EXTERIOR != locater.locate(p.getCoordinate());
     //double dist = DistanceOp.distance(p, boundary);
-    double dist = indexedDistance.getDistance(p);
+    double dist = indexedDistance.distance(p);
 
     // Points outside has a negative distance and thus will be weighted down later.
     return (inside ? 1 : -1) * dist;
