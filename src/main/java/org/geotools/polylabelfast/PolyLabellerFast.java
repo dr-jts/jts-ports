@@ -36,8 +36,6 @@ import org.locationtech.jts.operation.distance.IndexedFacetDistance;
 /**
  * Based on Vladimir Agafonkin's Algorithm https://www.mapbox.com/blog/polygon-center/
  * 
- * @author Ian Turton
- * @author Casper B�rgesen
  */
 public class PolyLabellerFast {
 

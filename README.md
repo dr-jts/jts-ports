@@ -8,4 +8,4 @@ Licensing and copyright is governed by the original code license.
 ## Using
 
 * Main Class: `org.locationtech.jtstest.testbuilder.JTSTestBuilder`
-* Program Arguments: `-geomfunc PortsGeoTools PortsOpenSphere PostsMXB PortsOpenSphere`
+* Program Arguments: `-geomfunc PortsGeoTools PortsOpenSphere PortsMXB PortsOpenSphere`
