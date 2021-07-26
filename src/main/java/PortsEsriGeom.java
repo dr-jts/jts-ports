@@ -6,6 +6,7 @@ import com.esri.core.geometry.OperatorBuffer;
 import com.esri.core.geometry.OperatorExportToWkt;
 import com.esri.core.geometry.OperatorImportFromWkt;
 import com.esri.core.geometry.OperatorIntersection;
+import com.esri.core.geometry.ogc.OGCGeometry;
 
 public class PortsEsriGeom {
 
@@ -33,7 +34,20 @@ public class PortsEsriGeom {
     return toJTS(result);
   }
   
-
+  public static boolean isSimple(Geometry geom) {
+    com.esri.core.geometry.Geometry egeom1 = fromJTS(geom);
+    OGCGeometry ogcGeom = OGCGeometry.createFromEsriGeometry(egeom1, null);
+    return ogcGeom.isSimple();
+  }
+  
+  public static Geometry makeSimple(Geometry geom) {
+    com.esri.core.geometry.Geometry egeom1 = fromJTS(geom);
+    OGCGeometry ogcGeom = OGCGeometry.createFromEsriGeometry(egeom1, null);
+    OGCGeometry gSimp = ogcGeom.makeSimple();
+    return toJTS(gSimp.getEsriGeometry());
+  }
+  
+  //================================================
   
   private static com.esri.core.geometry.Geometry fromJTS(Geometry geom) {
     // TODO make this less hacky
