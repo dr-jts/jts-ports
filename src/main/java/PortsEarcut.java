@@ -10,13 +10,14 @@ import org.locationtech.jts.geom.Polygon;
 import earcut4j.Earcut;
 
 public class PortsEarcut {
-  public static Geometry triangulate(Geometry poly) {
-    double[] data = extractData(poly);
-    List<Integer> tris = Earcut.earcut(data);
+  public static Geometry triangulate(Geometry geom) {
+    Polygon poly = (Polygon) geom;
+    double[] data = createData(poly);
+    int[] holeIndices = createHleIndices(poly);
+    List<Integer> tris = Earcut.earcut(data, holeIndices, 2);
     return createTriangles(data, tris);
   }
 
-  
   private static Geometry createTriangles(double[] data, List<Integer> tris) {
     List<Geometry> triGeoms = new ArrayList<Geometry>();
     GeometryFactory geomFact = new GeometryFactory();
@@ -42,19 +43,50 @@ public class PortsEarcut {
         p0, p1, p2, p0.copy()
     });
   }
-
-  private static double[] extractData(Geometry geom) {
-    Polygon poly = (Polygon) geom;
-    LinearRing ring = poly.getExteriorRing();
-    Coordinate[] coords = ring.getCoordinates();
-    int dataSize = 2 * (coords.length - 1);
+  
+  private static double[] createData(Polygon poly) {
+    int numCoords = poly.getNumPoints();
+    int numHoles = poly.getNumInteriorRing();
+        
+    //--- earcut does not need closing points
+    int dataSize = 2 * (numCoords - 1 - numHoles);
     double[] data = new double[dataSize];
+    
+    extractRing(poly.getExteriorRing(), data, 0);
+    int dataPos = 2 * (poly.getExteriorRing().getNumPoints() - 1);
+    
+    for (int i = 0; i < numHoles; i++) {
+      LinearRing hole = poly.getInteriorRingN(i);
+      extractRing(hole, data, dataPos);
+      int holeLen = 2 * (hole.getNumPoints() - 1);
+      dataPos += holeLen;
+    }
+    return data;
+  }
+
+  private static void extractRing(LinearRing ring, double[] data, int pos) {
+    Coordinate[] coords = ring.getCoordinates();
     int idata = 0;
     for (int i = 0; i < coords.length - 1; i++) {
       Coordinate p = coords[i];
-      data[idata++] = p.getX();
-      data[idata++] = p.getY();
+      data[pos + idata++] = p.getX();
+      data[pos + idata++] = p.getY();
     }
-    return data;
+  }
+  
+  private static int[] createHleIndices(Polygon poly) {
+    int numHoles = poly.getNumInteriorRing();
+        
+    int dataPos = poly.getExteriorRing().getNumPoints() - 1;
+    
+    int[] holePos = new int[numHoles];
+    for (int i = 0; i < numHoles; i++) {
+      LinearRing hole = poly.getInteriorRingN(i);
+      holePos[i] = dataPos;
+
+      int holeLen = hole.getNumPoints() - 1;
+      dataPos += holeLen;
+    }
+    return holePos;
   }
 }
